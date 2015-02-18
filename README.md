@@ -128,7 +128,9 @@ $$("dtable").sync(ref);
 Samples
 -----------
 
-There are no live samples unfortunately, you can look at samples folder for basic usage example
+There are no live samples unfortunately, you can checkout and run locally the next project
+
+https://github.com/webix-hub/webix-meteor-example
 
 
 
