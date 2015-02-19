@@ -1,113 +1,103 @@
 Meteor data adapter for Webix UI
 ================================
 
-Library allows to use [Webix](http://webix.com) components with [Meteor](https://meteor.com/)
+Allows using [Webix](http://webix.com) UI components with [Meteor](https://meteor.com/).
+Reactive widgets that have been tested include [DataTable](http://docs.webix.com/datatable__index.html)
+and [List](http://docs.webix.com/desktop__list.html). All other widgets with
+[linear](http://docs.webix.com/desktop__dynamic_loading.html) underlying data structures should work too. 
 
 How to use
 -----------
 
-- Copy codebase/meteor-data.js in the "public" folder of your project
-- Define data collection in default way
+- Add the [webix package](https://atmospherejs.com/webix):
 
-```js
-Books = new Mongo.Collection("books");
-```
+    ```sh
+    meteor add webix:webix
+    ```
 
-- Include Webix files on the page
+- Define data collections as usual:
 
-```html
-<head>
-	<!-- Webix -->
-	<script type="text/javascript" src="http://cdn.webix.io/2.2/webix.js"></script>
-	<link rel="stylesheet" type="text/css" href="http://cdn.webix.io/2.2/webix.css">
-	<!-- Webix-Data adapter -->
-	<script type="text/javascript" src="meteor-data.js"></script>
-</head>
-```
+    ```js
+    Movies = new Mongo.Collection('movies');
+    ```
 
-- Init webix component, using "meteor->{collection}" as data url
+- Initialize Webix components using "meteor->{collection}" as the data URL:
 
-```js
-webix.ui({
-	view:"datatable",
-	editable:true, editaction:"dblclick",
-	columns:[{
-		id:"name", editor:"text", fillspace:1
-	},{
-		id:"author", editor:"text", fillspace:1
-	}],
-
-	//load data from "books"
-	url: "meteor->books",
-	//save data to "books"
-	save:"meteor->books"
-}
-```	
+    ```js
+    webix.ui({
+      view: 'datatable',
+      editable: true, editaction: 'dblclick',
+      autoconfig: true,
+      // load data from the "movies" collection
+      url: 'meteor->books',
+      // save data to the 'movies' collection
+      save: 'meteor->books'
+    }
+    ```
 
 That is it.
 
-Adding "url" property will enable data loading and automatic updates of component when data changed in the Books Collection
+Adding the `url` property will enable data loading and automatic component updates when data changes in the
+specified [Collection](http://docs.meteor.com/#/full/collections).
 
-Adding "save" property ensures that all changes in the datatable will be saved back to Books Collection
+The `save` property ensures that all changes to the component will be saved back to the Collection.
 
 
 
 ### Using Cursors
 
-Instead of using text url you can use cursors and collections directly
+Instead of using a string for the `url` property, you can use cursors and collections directly.
 
 
 #### Cursor
 
 ```js
-Books = new Mongo.Collection("books");
-var data = Books.find();
+Movies = new Mongo.Collection('movies');
+var cursor = Movies.find();
 
 webix.ui({
-	view:"list",
-	url: webix.proxy("meteor", data)
-}
+  view: 'list',
+  url: webix.proxy('meteor', cursor)
+});
 ```
 
 #### Collection
 
 ```js
-Books = new Mongo.Collection("books");
+Movies = new Mongo.Collection('movies');
 
 webix.ui({
-	view:"list",
-	url:  webix.proxy("meteor", Books),
-	save: webix.proxy("meteor", Books)
-}
-```	
+  view: 'list',
+  url:  webix.proxy('meteor', Movies),
+  save: webix.proxy('meteor', Movies)
+});
+```  
 
-#### Mixing both
-
+#### Mixing cursors and collections
 
 ```js
-Books = new Mongo.Collection("books");
-var data = Books.find();
+Movies = new Mongo.Collection('movies');
 
 webix.ui({
-	view:"list",
-	url:  webix.proxy("meteor", Books.find()),
-	save: webix.proxy("meteor", Books),
-}
+  view: 'list',
+  url:  webix.proxy('meteor', Movies.find()),
+  save: webix.proxy('meteor', Movies)
+});
 ```
 
 
 ### Dynamic data loading
 
-You can use "load" command to (re)load data in the component. 
+You can use [`load`](http://docs.webix.com/api__atomdataloader_load.html) method to (re)load data in the component. 
 
 ```js
-$$("dtable").load("meteor->books");
+$$('datatable').load('meteor->movies');
 ```
 
 or
 
 ```js
-$$("dtable").load( webix.proxy("meteor", Books.find() ) );
+$$('datatable').load( webix.proxy('meteor', Movies.find()) );
 ```
 
 
@@ -115,29 +105,30 @@ $$("dtable").load( webix.proxy("meteor", Books.find() ) );
 
 ### Sync api
 
-Webix components has native [sync](http://docs.webix.com/api__link__ui.proto_sync.html) api to [sync data between components](http://docs.webix.com/desktop__data_binding.html). The same api can be used with Meteor
+Webix components have a [sync](http://docs.webix.com/api__link__ui.proto_sync.html) method to
+[synchronize data between components](http://docs.webix.com/desktop__data_binding.html). The method can be used with Meteor.
 
 
 ```
-Books = new Mongo.Collection("books");
-$$("dtable").sync(ref);
+Movies = new Mongo.Collection('movies');
+$$('details').sync($$('datatable'));
 ```
 
 
 
-Samples
------------
+Examples
+--------
 
-There are no live samples unfortunately, you can checkout and run locally the next project
-
-https://github.com/webix-hub/webix-meteor-example
+* [CRUD example](http://webix.meteor.com) - [source](https://github.com/dandv/meteor-webix)
 
 
 
 License
 ----------
 
-The MIT License
+Webix is published under the [GPLv3 license](https://github.com/dandv/meteor-webix/issues/1#issuecomment-74756813).
+
+This Meteor-Webix adapter is released under the MIT License:
 
 Copyright (c) 2015 Maksim Kozhukh 
 
