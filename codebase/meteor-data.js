@@ -32,7 +32,7 @@ webix.proxy.meteor = {
 	*/
 	load:function(view, callback){
 		this.parseSource();
-		this.cursor.observe({
+		this.query = this.cursor.observe({
 			//data in meteor collection added
 			added: function(post) {
 				//event can be triggered while initial data loading - ignoring
@@ -119,6 +119,11 @@ webix.proxy.meteor = {
 		}
 
 		view.meteor_saving = false;
+	},
+	//called when data source is not used anymore
+	release:function(){
+		if (this.query)
+			this.query.stop();
 	}
 };
 
