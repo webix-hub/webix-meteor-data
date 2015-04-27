@@ -99,14 +99,13 @@ webix.proxy.meteor = {
 		delete obj.data.id;
 		if (obj.operation == "update"){
 			//data changed
-			this.collection.update(obj.id, obj.data);
+			this.collection.update(obj.id, { $set: obj.data } );
 			webix.delay(function(){
 				callback.success("", { }, -1);
 			});
 		} else if (obj.operation == "insert"){
 			//data added
 			var id = this.collection.insert(obj.data);
-			console.log(id);
 			webix.delay(function(){
 				callback.success("", { newid: id }, -1);
 			});
@@ -149,3 +148,24 @@ webix.attachEvent("onSyncUnknown", function(target, source){
 		target.sync(data);
 	}
 });
+
+
+webix.protoUI({
+	name:"reactive",
+	$init:function(){
+		this.$ready.push(this.render);
+		this.$view.className += " webix_selectable ";
+		this.$view.style.overflow = "auto";
+	},
+	render:function(){
+		this.$view.innerHTML="";
+		if (this.config.data)
+			UI.renderWithData(Template[this.config.template], this.config.data, this.$view);
+		else
+			UI.render(Template[this.config.template], this.$view);
+	},
+	setValue:function(data){
+		this.config.data = data;
+		this.render();
+	}
+}, webix.ui.view, webix.BaseBind);
