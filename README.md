@@ -9,10 +9,10 @@ and [List](http://docs.webix.com/desktop__list.html). All other widgets with
 How to use
 -----------
 
-- Add the [webix package](https://atmospherejs.com/webix):
+- Add the [webix package](https://atmospherejs.com/webix/webix) and [a skin](https://atmospherejs.com/?q=webix%20skin):
 
     ```sh
-    meteor add webix:webix
+    meteor add webix:webix webix:skin-flat
     ```
 
 - Define data collections as usual:
