@@ -97,6 +97,7 @@ webix.proxy.meteor = {
 		view.meteor_saving = true;
 
 		delete obj.data.id;
+		obj.id = this.idHelper.getObjId(obj.id, this.collection);
 		if (obj.operation == "update"){
 			//data changed
 			this.collection.update(obj.id, { $set: obj.data } );
@@ -105,9 +106,10 @@ webix.proxy.meteor = {
 			});
 		} else if (obj.operation == "insert"){
 			//data added
-			var id = this.collection.insert(obj.data);
+			var id = this.collection.insert(this.idHelper.prepareObjData(obj.data, this.collection));
 			webix.delay(function(){
-				callback.success("", { newid: id }, -1);
+				//add an empty string to the id to convert it if it's an ObjectID
+				callback.success("", { newid: id + ''}, -1);
 			});
 		} else if (obj.operation == "delete"){
 			//data removed
@@ -123,7 +125,45 @@ webix.proxy.meteor = {
 	release:function(){
 		if (this.query)
 			this.query.stop();
+	},
+
+	idHelper: {
+
+		getObjId: function(id, currentCollection){
+			if(this.recordHasObjectID(currentCollection._collection._docs._map, id)){
+				id = new Mongo.Collection.ObjectID(id);
+			}
+			return id;
+		},
+
+		//We can find the record, and examine whether the _id has a _str property 
+		recordHasObjectID: function (collectionMap, id) {
+			if (!collectionMap || !id)
+				return false;
+			var currentRecord = collectionMap[id];
+			return (currentRecord && currentRecord._id._str);
+		},
+
+		//if collection uses ObjectIDs, add an ObjectID _id to the obj.data
+		prepareObjData: function(objData, currentCollection){
+			if(this.collectionHasObjectIDs(currentCollection._collection._docs._map))
+				objData._id = new Mongo.Collection.ObjectID();
+			return objData;
+		},
+
+		//for insertions we take the first record in the keys from the map and check if it has an ObjectID
+		collectionHasObjectIDs: function (collectionMap) {
+			if (!collectionMap)
+				return false;
+			var collectionMapKeys = Object.keys(collectionMap);
+			if (!collectionMapKeys || collectionMapKeys.length === 0)
+				return false;
+			var firstKey = collectionMapKeys[0];
+			var firstRecord = collectionMap[firstKey];
+			return (firstRecord && firstRecord._id._str);
+		}
 	}
+
 };
 
 
