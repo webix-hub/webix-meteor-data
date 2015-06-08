@@ -97,6 +97,7 @@ webix.proxy.meteor = {
 		view.meteor_saving = true;
 
 		delete obj.data.id;
+		obj.id = this.idHelper.getObjId(obj.id, this.collection);
 		if (obj.operation == "update"){
 			//data changed
 			this.collection.update(obj.id, { $set: obj.data } );
@@ -107,7 +108,8 @@ webix.proxy.meteor = {
 			//data added
 			var id = this.collection.insert(obj.data);
 			webix.delay(function(){
-				callback.success("", { newid: id }, -1);
+				//add an empty string to the id to convert it if it's an ObjectID
+				callback.success("", { newid: id + ''}, -1);
 			});
 		} else if (obj.operation == "delete"){
 			//data removed
@@ -123,7 +125,27 @@ webix.proxy.meteor = {
 	release:function(){
 		if (this.query)
 			this.query.stop();
+	},
+
+	idHelper: {
+
+		getObjId: function(id, currentCollection){
+			if(this.recordHasObjectID(currentCollection._collection._docs._map, id)){
+				id = new Mongo.Collection.ObjectID(id);
+			}
+			return id;
+		},
+
+		//We can find the record, and examine whether the _id has a _str property 
+		recordHasObjectID: function (collectionMap, id) {
+			if (!collectionMap || !id)
+				return false;
+			var currentRecord = collectionMap[id];
+			return (currentRecord && currentRecord._id._str);
+		}
+
 	}
+
 };
 
 
