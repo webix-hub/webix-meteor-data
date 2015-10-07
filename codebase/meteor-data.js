@@ -34,7 +34,7 @@ webix.proxy.meteor = {
 		this.parseSource();
 		this.query = this.cursor.observe({
 			//data in meteor collection added
-			added: function(post) {
+		        addedAt: function(post, atIndex, before) {
 				//event can be triggered while initial data loading - ignoring
 				if (view.waitData.state == "pending") return;
 
@@ -46,7 +46,7 @@ webix.proxy.meteor = {
 
 				//do not trigger data saving events
 				webix.dp(view).ignore(function(){
-					view.add(post);
+				        view.add(post, atIndex);
 				});
 			},
 			//data in meteor collection changed
