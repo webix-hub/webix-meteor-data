@@ -1,6 +1,8 @@
 Meteor data adapter for Webix UI
 ================================
 
+[![npm version](https://badge.fury.io/js/webix-meteor-data.svg)](https://badge.fury.io/js/webix-meteor-data)
+
 Allows using [Webix](http://webix.com) UI components with [Meteor](https://meteor.com/).
 Reactive widgets that have been tested include [DataTable](http://docs.webix.com/datatable__index.html)
 and [List](http://docs.webix.com/desktop__list.html). All other widgets with
@@ -9,10 +11,11 @@ and [List](http://docs.webix.com/desktop__list.html). All other widgets with
 How to use
 -----------
 
-- Add the [webix package](https://atmospherejs.com/webix):
+- Add the webix package
 
     ```sh
-    meteor add webix:webix
+    meteor npm i --save webix
+    meteor npm i --save webix-meteor-data
     ```
 
 - Define data collections as usual:
@@ -113,15 +116,6 @@ Webix components have a [sync](http://docs.webix.com/api__link__ui.proto_sync.ht
 Movies = new Mongo.Collection('movies');
 $$('details').sync($$('datatable'));
 ```
-
-
-
-Examples
---------
-
-* [CRUD example](http://webix.meteor.com) - [source](https://github.com/dandv/meteor-webix)
-
-
 
 License
 ----------
